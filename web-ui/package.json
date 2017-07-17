@@ -7,5 +7,8 @@
     "start": "node server.js"
   },
   "author": "Fluffy observer team",
-  "license": "Apache-2.0"
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "express": "^4.15.3"
+  }
 }
