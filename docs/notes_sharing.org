@@ -1,0 +1,23 @@
+#+TODO: TODO(t) | DONE(d) CANCELED(c)
+#+STARTUP: logdone
+#+STARTUP: lognotdone
+#+STARTUP: inlineimages
+#+STARTUP: indent
+#+FILETAGS: :home:
+#+TAGS: backend(b) frontend(f) 
+#+TAGS:
+
+* Auth
+** Sequence
+ #+BEGIN_SRC plantuml :file auth.png
+   client -> server: POST /auth\nlogin=L&password=P
+   server -> client: HTTP 302 Found\nSet-Cookie: session=ABCDEFGHJKLM
+
+newpage
+
+  client -> server: GET /tasks\nCookie: session=ABCDEFGHJKLM
+
+ #+END_SRC
+
+ #+RESULTS:
+ [[file:auth.png]]
