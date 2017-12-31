@@ -26,24 +26,33 @@ func (app *App) AddUser(login, password string) error {
 		return fmt.Errorf("user with login %s already exists", login)
 	}
 
-	hasher := sha256.New()
-	hasher.Write([]byte(password))
-
-	user := &User{Login: login, PasswordHash: hasher.Sum(nil)}
+	user := &User{Login: login, PasswordHash: GetPasswordHash(password)}
 	app.users = append(app.users, user)
 	app.Db.Save(user)
 
 	return nil
 }
 
+//TODO create hash only once, and reset it
+func GetPasswordHash(password string) []byte {
+	hash := sha256.New()
+	hash.Write([]byte(password))
+
+	return hash.Sum(nil)
+}
+
 func (app *App) IsUserExists(login string) bool {
+	return app.GetUserByLogin(login) != nil
+}
+
+func (app *App) GetUserByLogin(login string) *User {
 	for _, user := range app.users {
 		if user.Login == login {
-			return true
+			return user
 		}
 	}
 
-	return false
+	return nil
 }
 
 func (app *App) LoadUsers() {

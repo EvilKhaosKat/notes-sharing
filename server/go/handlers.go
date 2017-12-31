@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"bytes"
 )
 
 const (
@@ -31,11 +32,27 @@ func (auth *Auth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if create != "" {
 		createUser(w, auth.app, login, password)
 	} else {
-		authUser(w, login, password)
+		authUser(w, auth.app, login, password)
 	}
 }
 
-func authUser(w http.ResponseWriter, login string, password string) {
+func authUser(w http.ResponseWriter, app *App, login string, password string) {
+	user := app.GetUserByLogin(login)
+	if user == nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "User with login %s not found", login)
+
+		return
+	}
+
+	if !bytes.Equal(user.PasswordHash, GetPasswordHash(password)) {
+		w.WriteHeader(http.StatusUnauthorized)
+		fmt.Fprintf(w, "Incorrect password for login %s", login)
+
+		return
+	}
+
+	//TODO create session
 	fmt.Fprintf(w, "Auth with %s:%s", login, password)
 }
 
