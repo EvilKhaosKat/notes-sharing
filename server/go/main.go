@@ -1,15 +1,14 @@
 package main
 
-import (
-	"fmt"
-	"net/http"
-
-	"./handlers"
-)
-
+// main function
 func main() {
-	http.HandleFunc("/auth", handlers.Auth)
+	app := initApp()
+	app.StartWebServer()
+}
 
-	fmt.Println("Starting server at :8080")
-	http.ListenAndServe(":8080", nil)
+func initApp() *App {
+	app := &App{Db: initDb()}
+	app.LoadUsers()
+
+	return app
 }
