@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"net/http"
 	"bytes"
+	"time"
 )
 
 const (
 	loginParam    = "login"
 	passwordParam = "password"
 	createParam   = "create"
+	sessionParam = "session"
 )
 
 
@@ -52,7 +54,14 @@ func authUser(w http.ResponseWriter, app *App, login string, password string) {
 		return
 	}
 
-	//TODO create session
+	session := MakeSessionObject(app)
+	app.AssignSessionForUser(session, user)
+
+	expiration := time.Now().Add(365 * 24 * time.Hour)
+	cookie := http.Cookie{Name: sessionParam, Value: string(session), Expires: expiration}
+	http.SetCookie(w, &cookie)
+
+
 	fmt.Fprintf(w, "Auth with %s:%s", login, password)
 }
 

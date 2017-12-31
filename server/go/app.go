@@ -12,6 +12,7 @@ import (
 type App struct {
 	Db    *storm.DB
 	users []*User
+	ActiveSessions map[Session]*User
 }
 
 func (app *App) StartWebServer() {
@@ -69,4 +70,18 @@ func (app *App) LoadUsers() {
 func (app *App) Close() {
 	//TODO close webserver
 	app.Db.Close()
+}
+
+func (app *App) GetUserBySession(session Session) *User {
+	user, _ := app.ActiveSessions[session]
+
+	return user
+}
+
+func (app *App) IsSessionExists(session Session) bool {
+	return app.GetUserBySession(session) != nil
+}
+
+func (app *App) AssignSessionForUser(session Session, user *User) {
+	app.ActiveSessions[session] = user
 }
