@@ -8,9 +8,6 @@ const (
 
 type Session string
 
-
-var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
-
 func MakeSessionObject(app *App) Session {
 	session := makeSessionByString()
 	for {
@@ -27,6 +24,8 @@ func MakeSessionObject(app *App) Session {
 func makeSessionByString() Session {
 	return Session(createRandomString())
 }
+
+var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func createRandomString() string {
 	b := make([]rune, sessionLength)
