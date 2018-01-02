@@ -1,9 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"net/http"
-	"bytes"
 	"time"
 )
 
@@ -11,11 +11,10 @@ const (
 	loginParam    = "login"
 	passwordParam = "password"
 	createParam   = "create"
-	sessionParam = "session"
+	sessionParam  = "session"
 )
 
-
-type Auth struct{
+type Auth struct {
 	app *App
 }
 
@@ -60,7 +59,6 @@ func authUser(w http.ResponseWriter, app *App, login string, password string) {
 	expiration := time.Now().Add(365 * 24 * time.Hour)
 	cookie := http.Cookie{Name: sessionParam, Value: string(session), Expires: expiration}
 	http.SetCookie(w, &cookie)
-
 
 	fmt.Fprintf(w, "Auth with %s:%s", login, password)
 }

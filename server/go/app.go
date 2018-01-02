@@ -1,11 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"crypto/sha256"
-	"github.com/asdine/storm"
-	"net/http"
+	"fmt"
 	"log"
+	"net/http"
+
+	"github.com/asdine/storm"
 )
 
 //App is core structure, represents server application
