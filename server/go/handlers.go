@@ -22,7 +22,8 @@ const (
 
 //errors and other string constants
 const (
-	errWrongMethod = "wrong http method usage found"
+	errWrongMethod         = "wrong http method usage found"
+	errNoActiveSessionById = "no active session with specified id"
 )
 
 type ContextParam int
@@ -140,21 +141,27 @@ func getUserByActiveSession(app *App, session Session) (*User, bool) {
 //WithUser adds *User parameter in context,
 //requires *App in context
 func WithUser(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
-		ctx := newContextWithUser(r.Context(), r)
-		next.ServeHTTP(rw, r.WithContext(ctx))
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx, userFound := newContextWithUser(r.Context(), r)
+
+		if userFound { //TODO log an error
+			next.ServeHTTP(w, r.WithContext(ctx))
+		} else {
+			http.Error(w, errNoActiveSessionById, http.StatusBadRequest)
+		}
 	})
 }
 
-func newContextWithUser(ctx context.Context, r *http.Request) context.Context {
+//requires *App in context
+func newContextWithUser(ctx context.Context, r *http.Request) (context.Context, bool) {
 	app := getAppFromContext(ctx)
 	user, found := getUser(r, app)
 
 	if !found {
-		return ctx //TODO or log an error?
+		return ctx, false
 	}
 
-	return context.WithValue(ctx, UserContextParam, user)
+	return context.WithValue(ctx, UserContextParam, user), true
 }
 
 func getUserFromContext(ctx context.Context) *User {
