@@ -2,11 +2,13 @@ package main
 
 import (
 	"bytes"
+	"context"
 	"fmt"
 	"net/http"
 	"time"
 )
 
+//queries params
 const (
 	loginParam    = "login"
 	passwordParam = "password"
@@ -14,11 +16,28 @@ const (
 	sessionParam  = "session"
 )
 
+const (
+	authPage = "/authPage" //TODO replace with real link
+)
+
+//errors and other string constants
+const (
+	errWrongMethod = "wrong http method usage found"
+)
+
+type ContextParam int
+
+const (
+	UserContextParam      = ContextParam(iota)
+	RequestIdContextParam = ContextParam(iota)
+	AppContextParam       = ContextParam(iota)
+)
+
+//Auth is '/auth' http handler
 type Auth struct {
 	app *App
 }
 
-//Auth is http handler function
 func (auth *Auth) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	login := r.FormValue(loginParam)
 	password := r.FormValue(passwordParam)
@@ -72,4 +91,84 @@ func createUser(w http.ResponseWriter, app *App, login string, password string) 
 	} else {
 		fmt.Fprintf(w, "User %s created", login)
 	}
+}
+
+//Notes is '/notes' http handler
+type Notes struct {
+	app *App
+}
+
+func (notes *Notes) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		notes.app.GetNotesByUser(getUserFromContext(r.Context()))
+		fmt.Fprintf(w, "get notes called")
+	case "POST":
+	// create new TODO to be done
+	default:
+		http.Error(w, errWrongMethod, http.StatusBadRequest)
+	}
+}
+
+//CheckAuthorized validates whether session was provided, and it's actually active session for real user,
+//requires *App in context
+func CheckAuthorized(h http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if _, found := getUser(r, getAppFromContext(r.Context())); !found {
+			http.Redirect(w, r, authPage, http.StatusUnauthorized)
+		} else {
+			h.ServeHTTP(w, r)
+		}
+	})
+}
+
+func getUser(r *http.Request, app *App) (*User, bool) {
+	sessionCookie, err := r.Cookie(sessionParam)
+	if err != nil {
+		return nil, false
+	}
+
+	user, found := getUserByActiveSession(app, Session(sessionCookie.Value))
+	return user, found
+}
+
+func getUserByActiveSession(app *App, session Session) (*User, bool) {
+	user, found := app.ActiveSessions[session]
+	return user, found
+}
+
+//WithUser adds *User parameter in context,
+//requires *App in context
+func WithUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, r *http.Request) {
+		ctx := newContextWithUser(r.Context(), r)
+		next.ServeHTTP(rw, r.WithContext(ctx))
+	})
+}
+
+func newContextWithUser(ctx context.Context, r *http.Request) context.Context {
+	app := getAppFromContext(ctx)
+	user, found := getUser(r, app)
+
+	if !found {
+		return ctx //TODO or log an error?
+	}
+
+	return context.WithValue(ctx, UserContextParam, user)
+}
+
+func getUserFromContext(ctx context.Context) *User {
+	return ctx.Value(UserContextParam).(*User)
+}
+
+//WithApp adds *App parameter in context
+func WithApp(next http.Handler, app *App) http.Handler {
+	return http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
+		ctx := context.WithValue(req.Context(), AppContextParam, app)
+		next.ServeHTTP(rw, req.WithContext(ctx))
+	})
+}
+
+func getAppFromContext(ctx context.Context) *App {
+	return ctx.Value(AppContextParam).(*App)
 }

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"time"
 	"math/rand"
+	"time"
 )
 
 // main function
@@ -11,6 +11,7 @@ func main() {
 
 	app := initApp()
 	app.StartWebServer()
+	defer app.Close()
 }
 
 func initApp() *App {

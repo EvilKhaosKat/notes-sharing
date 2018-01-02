@@ -11,13 +11,15 @@ import (
 
 //App is core structure, represents server application
 type App struct {
-	Db    *storm.DB
-	users []*User
+	Db             *storm.DB
+	users          []*User
 	ActiveSessions map[Session]*User
 }
 
+//TODO unify WithApp and WithUser (+WithLog) into smth like InitContext
 func (app *App) StartWebServer() {
 	http.Handle("/auth", &Auth{app})
+	http.Handle("/notes", WithApp(WithUser(CheckAuthorized(&Notes{app})), app))
 
 	fmt.Println("Starting server at :8080")
 	http.ListenAndServe(":8080", nil)
@@ -85,4 +87,8 @@ func (app *App) IsSessionExists(session Session) bool {
 
 func (app *App) AssignSessionForUser(session Session, user *User) {
 	app.ActiveSessions[session] = user
+}
+
+func (app *App) GetNotesByUser(user *User) []*Notes {
+	return nil
 }
