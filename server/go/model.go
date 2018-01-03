@@ -4,7 +4,7 @@ import "time"
 
 //User describes user model
 type User struct {
-	ID           int `storm:"id,increment"`
+	Id           int `storm:"id,increment"`
 	Login        string
 	PasswordHash []byte
 	Name         string
@@ -20,5 +20,5 @@ type Note struct {
 	Archived    bool
 	CreatedWhen time.Time
 	CreateBy    time.Time
-	Owners      []*UserId
+	Owners      []int //TODO replace with UserId
 }

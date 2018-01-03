@@ -89,6 +89,27 @@ func (app *App) AssignSessionForUser(session Session, user *User) {
 	app.ActiveSessions[session] = user
 }
 
-func (app *App) GetNotesByUser(user *User) []*Notes {
-	return nil
+func (app *App) GetNotesByUser(user *User) []*Note {
+	//TODO since we don't have contains query - get all entries, find suitable directly, to be replaced
+	var allNotes []*Note
+	app.Db.All(allNotes)
+
+	var userNotes []*Note
+	for _, note := range allNotes {
+		if isUserOwner(user, note) {
+			userNotes = append(userNotes, note)
+		}
+	}
+
+	return userNotes
+}
+
+func isUserOwner(user *User, note *Note) bool {
+	for _, ownerId := range note.Owners {
+		if user.Id == ownerId {
+			return true
+		}
+	}
+
+	return false
 }
