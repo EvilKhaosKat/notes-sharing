@@ -34,6 +34,7 @@ func (app *App) AddUser(login, password string) error {
 	user := &User{Login: login, PasswordHash: GetPasswordHash(password)}
 	app.users = append(app.users, user)
 	app.Db.Save(user)
+	//TODO log error
 
 	return nil
 }
@@ -95,6 +96,8 @@ func (app *App) GetNotesByUser(user *User) []*Note {
 	var allNotes []*Note
 	app.Db.All(&allNotes)
 
+	fmt.Printf("GetNotesByUser.allNotes:%+v:", allNotes)
+
 	var userNotes []*Note
 	for _, note := range allNotes {
 		if isUserOwner(user, note) {
@@ -119,7 +122,10 @@ func isUserOwner(user *User, note *Note) bool {
 func (app *App) CreateNewNote(user *User) *Note {
 	note := &Note{CreatedWhen: time.Now(), CreateBy: user.Id, Owners: []int{user.Id}}
 
-	app.Db.Save(note)
+	err := app.Db.Save(note)
+	if err != nil {
+		panic(err) //TODO log
+	}
 
 	return note
 }

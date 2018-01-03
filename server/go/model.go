@@ -15,6 +15,7 @@ type UserId int
 
 //Note describes note model
 type Note struct {
+	Id          int `storm:"id,increment"`
 	Head        string
 	Body        string
 	Archived    bool
