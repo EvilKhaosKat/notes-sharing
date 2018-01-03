@@ -19,6 +19,6 @@ type Note struct {
 	Body        string
 	Archived    bool
 	CreatedWhen time.Time
-	CreateBy    time.Time
+	CreateBy    int
 	Owners      []int //TODO replace with UserId
 }

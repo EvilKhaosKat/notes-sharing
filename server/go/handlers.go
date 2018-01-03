@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"time"
@@ -80,7 +81,7 @@ func authUser(w http.ResponseWriter, app *App, login string, password string) {
 	cookie := http.Cookie{Name: sessionParam, Value: string(session), Expires: expiration}
 	http.SetCookie(w, &cookie)
 
-	fmt.Fprintf(w, "Auth with %s:%s", login, password)
+	fmt.Fprintf(w, "Auth with %s", login)
 }
 
 func createUser(w http.ResponseWriter, app *App, login string, password string) {
@@ -100,12 +101,28 @@ type Notes struct {
 }
 
 func (notes *Notes) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	user := getUserFromContext(r.Context())
+
+	//TODO minimize code duplication
 	switch r.Method {
 	case "GET":
-		notes.app.GetNotesByUser(getUserFromContext(r.Context()))
-		fmt.Fprintf(w, "get notes called")
+		notes := notes.app.GetNotesByUser(user)
+
+		notesJson, err := json.Marshal(notes)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		fmt.Fprint(w, string(notesJson))
 	case "POST":
-	// create new TODO to be done
+		note := notes.app.CreateNewNote(user)
+
+		noteJson, err := json.Marshal(note)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+
+		fmt.Fprint(w, string(noteJson))
 	default:
 		http.Error(w, errWrongMethod, http.StatusBadRequest)
 	}

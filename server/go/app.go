@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/asdine/storm"
 )
@@ -92,7 +93,7 @@ func (app *App) AssignSessionForUser(session Session, user *User) {
 func (app *App) GetNotesByUser(user *User) []*Note {
 	//TODO since we don't have contains query - get all entries, find suitable directly, to be replaced
 	var allNotes []*Note
-	app.Db.All(allNotes)
+	app.Db.All(&allNotes)
 
 	var userNotes []*Note
 	for _, note := range allNotes {
@@ -104,6 +105,7 @@ func (app *App) GetNotesByUser(user *User) []*Note {
 	return userNotes
 }
 
+//TODO check owner
 func isUserOwner(user *User, note *Note) bool {
 	for _, ownerId := range note.Owners {
 		if user.Id == ownerId {
@@ -112,4 +114,12 @@ func isUserOwner(user *User, note *Note) bool {
 	}
 
 	return false
+}
+
+func (app *App) CreateNewNote(user *User) *Note {
+	note := &Note{CreatedWhen: time.Now(), CreateBy: user.Id, Owners: []int{user.Id}}
+
+	app.Db.Save(note)
+
+	return note
 }
