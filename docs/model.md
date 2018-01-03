@@ -4,9 +4,10 @@
 - name
 
 ### Notes
+- id
 - head
 - body
 - archived
-- created when
-- created by
-- owners []User
+- createdWhen
+- createdBy User.Id
+- owners []User.Id

@@ -41,3 +41,18 @@
 
  #+RESULTS:
  [[file:images/auth_create_negative.png]]
+
+* Notes
+** Get all user notes - positive sequence
+ #+BEGIN_SRC plantuml :file images/notes/get_positive.png
+   client -> server: GET /notes
+   server -> client: HTTP 200\n[{"id":1, "head":"title one", "body":"note test", "archived":false}]
+ #+END_SRC
+
+ #+RESULTS:
+ [[file:images/notes/get_positive.png]]
+** Create new user note - positive sequence
+ #+BEGIN_SRC plantuml :file images/notes/get_positive.png
+   client -> server: POST /notes
+   server -> client: HTTP 200\n[{"id":2, "head":"", "body":"", "archived":false}]
+ #+END_SRC
