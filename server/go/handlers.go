@@ -5,7 +5,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"path"
+	"strconv"
 	"time"
 )
 
@@ -25,6 +28,9 @@ const (
 const (
 	errWrongMethod         = "wrong http method usage found"
 	errNoActiveSessionById = "no active session with specified id"
+	errNoteIdNotFound      = "note with such id wasn't found"
+	errNewNoteNotProvided  = "new note value wasn't provided in body"
+	errNewNoteWrongId      = "wrong id provided for new note/id cannot be changed"
 )
 
 type ContextParam int
@@ -103,7 +109,18 @@ type Notes struct {
 func (notes *Notes) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	user := getUserFromContext(r.Context())
 
-	//TODO minimize code duplication
+	noteId, err := getNoteIdIfSpecified(r)
+	isNoteIdSpecified := /*noteId != -1 &&*/ err == nil
+
+	if isNoteIdSpecified {
+		notes.serveExactNote(w, r, user, noteId)
+	} else {
+		notes.serveAllNotes(w, r, user)
+	}
+}
+
+//TODO minimize code duplication
+func (notes *Notes) serveAllNotes(w http.ResponseWriter, r *http.Request, user *User) {
 	switch r.Method {
 	case "GET":
 		notes := notes.app.GetNotesByUser(user)
@@ -111,6 +128,7 @@ func (notes *Notes) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		notesJson, err := json.Marshal(notes)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		fmt.Fprint(w, string(notesJson))
@@ -120,12 +138,70 @@ func (notes *Notes) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		noteJson, err := json.Marshal(note)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
 
 		fmt.Fprint(w, string(noteJson))
 	default:
 		http.Error(w, errWrongMethod, http.StatusBadRequest)
 	}
+}
+
+func (notes *Notes) serveExactNote(w http.ResponseWriter, r *http.Request, user *User, noteId int) {
+	switch r.Method {
+	case "PUT":
+		note := notes.app.GetNoteByUser(user, noteId)
+		if note == nil {
+			http.Error(w, errNoteIdNotFound, http.StatusBadRequest)
+			return
+		}
+
+		newNote, err := getNewNoteValue(r)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+
+		if newNote.Id != note.Id {
+			http.Error(w, errNewNoteWrongId, http.StatusBadRequest)
+		}
+
+		notes.app.SaveNote(newNote)
+	case "DELETE":
+		note := notes.app.GetNoteByUser(user, noteId)
+		if note == nil {
+			http.Error(w, errNoteIdNotFound, http.StatusBadRequest)
+			return
+		}
+
+		notes.app.RemoveNote(note)
+	default:
+		http.Error(w, errWrongMethod, http.StatusBadRequest)
+	}
+}
+
+func getNewNoteValue(r *http.Request) (*Note, error) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(body) > 0 {
+		note := new(Note)
+		err := json.Unmarshal(body, note)
+		if err != nil {
+			return nil, err
+		}
+
+		return note, nil
+	} else {
+		return nil, fmt.Errorf(errNewNoteNotProvided)
+	}
+}
+
+func getNoteIdIfSpecified(r *http.Request) (int, error) {
+	idRaw := path.Base(r.URL.Path)
+	return strconv.Atoi(idRaw)
 }
 
 //CheckAuthorized validates whether session was provided, and it's actually active session for real user,

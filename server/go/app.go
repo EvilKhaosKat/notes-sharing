@@ -20,7 +20,7 @@ type App struct {
 //TODO unify WithApp and WithUser (+WithLog) into smth like InitContext
 func (app *App) StartWebServer() {
 	http.Handle("/auth", &Auth{app})
-	http.Handle("/notes", WithApp(WithUser(CheckAuthorized(&Notes{app})), app))
+	http.Handle("/notes/", WithApp(WithUser(CheckAuthorized(&Notes{app})), app))
 
 	fmt.Println("Starting server at :8080")
 	http.ListenAndServe(":8080", nil)
@@ -96,8 +96,6 @@ func (app *App) GetNotesByUser(user *User) []*Note {
 	var allNotes []*Note
 	app.Db.All(&allNotes)
 
-	fmt.Printf("GetNotesByUser.allNotes:%+v:", allNotes)
-
 	var userNotes []*Note
 	for _, note := range allNotes {
 		if isUserOwner(user, note) {
@@ -106,6 +104,23 @@ func (app *App) GetNotesByUser(user *User) []*Note {
 	}
 
 	return userNotes
+}
+
+func (app *App) GetNoteByUser(user *User, noteId int) *Note {
+	userNotes := app.GetNotesByUser(user) //not optimal
+	for _, note := range userNotes {
+		if note.Id == noteId {
+			return note
+		}
+	}
+
+	return nil
+}
+
+func (app *App) RemoveNote(note *Note) {
+	if note != nil {
+		app.Db.DeleteStruct(note)
+	}
 }
 
 //TODO check owner
@@ -128,4 +143,8 @@ func (app *App) CreateNewNote(user *User) *Note {
 	}
 
 	return note
+}
+
+func (app *App) SaveNote(note *Note) {
+	app.Db.Update(note)
 }

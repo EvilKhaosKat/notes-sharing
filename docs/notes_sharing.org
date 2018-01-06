@@ -52,7 +52,10 @@
  #+RESULTS:
  [[file:images/notes/get_positive.png]]
 ** Create new user note - positive sequence
- #+BEGIN_SRC plantuml :file images/notes/get_positive.png
+ #+BEGIN_SRC plantuml :file images/notes/post_create_new_positive.png
    client -> server: POST /notes
    server -> client: HTTP 200\n[{"id":2, "head":"", "body":"", "archived":false}]
  #+END_SRC
+
+ #+RESULTS:
+ [[file:images/notes/post_create_new_positive.png]]
