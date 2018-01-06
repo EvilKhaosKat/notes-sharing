@@ -20,6 +20,6 @@ type Note struct {
 	Body        string
 	Archived    bool
 	CreatedWhen time.Time
-	CreateBy    int
+	CreatedBy   int
 	Owners      []int //TODO replace with UserId
 }

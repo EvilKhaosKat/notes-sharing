@@ -3,6 +3,7 @@
 #+STARTUP: lognotdone
 #+STARTUP: inlineimages
 #+STARTUP: indent
+# -*- org-confirm-babel-evaluate: nil -*-
 #+FILETAGS: :home:
 #+TAGS: backend(b) frontend(f) 
 #+TAGS:
@@ -45,17 +46,33 @@
 * Notes
 ** Get all user notes - positive sequence
  #+BEGIN_SRC plantuml :file images/notes/get_positive.png
-   client -> server: GET /notes
-   server -> client: HTTP 200\n[{"id":1, "head":"title one", "body":"note test", "archived":false}]
+   client -> server: GET /notes/
+   server -> client: HTTP 200\n[{"Id":1,"Head":"","Body":"","Archived":false,\n"CreatedWhen":"2018-01-03T23:33:24.108581+04:00","CreatedBy":2,"Owners":[2]}]
  #+END_SRC
 
  #+RESULTS:
  [[file:images/notes/get_positive.png]]
 ** Create new user note - positive sequence
  #+BEGIN_SRC plantuml :file images/notes/post_create_new_positive.png
-   client -> server: POST /notes
-   server -> client: HTTP 200\n[{"id":2, "head":"", "body":"", "archived":false}]
+   client -> server: POST /notes/\n
+   server -> client: HTTP 200\n[{"Id":1,"Head":"","Body":"","Archived":false,\n"CreatedWhen":"2018-01-03T23:33:24.108581+04:00","CreateBy":2,"Owners":[2]}]
  #+END_SRC
 
  #+RESULTS:
  [[file:images/notes/post_create_new_positive.png]]
+** Update existent user note - positive sequence
+ #+BEGIN_SRC plantuml :file images/notes/post_update_positive.png
+   client -> server: PUT /notes/1\nContent-Type: application/json\n{"Id":1,"Head":"","Body":"new body ","Archived":false,\n"CreatedWhen":"2018-01-03T23:33:24.108581+04:00","CreateBy":2,"Owners":[2]}
+   server -> client: HTTP 200
+ #+END_SRC
+
+ #+RESULTS:
+ [[file:images/notes/post_update_positive.png]]
+** Delete existent user note - positive sequence
+ #+BEGIN_SRC plantuml :file images/notes/post_delete_positive.png
+   client -> server: DELETE /notes/1
+   server -> client: HTTP 200
+ #+END_SRC
+
+ #+RESULTS:
+ [[file:images/notes/post_delete_positive.png]]
