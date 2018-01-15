@@ -7,7 +7,6 @@ import { Grid, Row, Col } from 'react-bootstrap';
 
 import './css/NoteApp.css'
 import './css/bootstrap.css'
-import './css/fa-svg-with-js.css'
 
 class NotesApp extends Component {
 	render() {
