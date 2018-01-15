@@ -1,3 +1,8 @@
+# A shortcut for local usage
+1. download the folder and then navigate into it
+2. `npm install`
+3. `npm start`
+
 This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
 
 Below you will find some information on how to perform common tasks.<br>
