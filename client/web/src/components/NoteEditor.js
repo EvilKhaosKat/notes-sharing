@@ -36,14 +36,23 @@ class NoteEditor extends Component {
 	}
 
 	renderEditor() {
-		return(
-			<form>
-				<FormGroup controlId="noteEditorForm">
-					<FormControl type="text" className="noteHeadEditor"/>
-					<FormControl componentClass="textarea" className="noteBodyEditor"/>
-				</FormGroup>
-			</form>
-		);
+		const { store } = this.context;
+		const selectedNote = store.getState().selectedNote;
+		console.log("Selected note in editor: ", selectedNote);
+		if (selectedNote.id !== undefined) {		
+			return(
+				<form>
+					<FormGroup controlId="noteEditorForm">
+						<FormControl type="text" className="noteHeadEditor"/>
+						<FormControl componentClass="textarea" className="noteBodyEditor"/>
+					</FormGroup>
+				</form>
+			);
+		} else {
+			return(
+				<div>Nothing...</div>
+			);
+		}
 	}
 
 	render() {
