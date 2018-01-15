@@ -1,10 +1,23 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { ButtonToolbar, FormGroup, FormControl } from 'react-bootstrap';
 import DeleteButton from './DeleteButton';
 import ShareButton from './ShareButton';
 import { createStore } from 'redux';
 
 class NoteEditor extends Component {
+	
+	componentDidMount() {
+		const { store } = this.context;
+		this.unsubscribe = store.subscribe(() => 
+			this.forceUpdate()
+		);
+	}
+
+	componentWillUnmount() {
+		this.unsubscribe();
+	}
+	
 	editNote() {
 
 	}
@@ -45,6 +58,10 @@ class NoteEditor extends Component {
 			</div>
 		);
 	}
+}
+
+NoteEditor.contextTypes = {
+	store: PropTypes.object
 }
 
 export default NoteEditor;

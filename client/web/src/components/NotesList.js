@@ -32,7 +32,7 @@ class NotesList extends Component {
 		return(
 			<div className="notesList">
 				{notes.map(note => 
-					<Note key={note.id} id={"Note_" + note.id} name={note.name} content={note.content} />
+					<Note key={note.id} id={note.id} name={note.name} content={note.content} />
 				)}
 			</div>
 		);

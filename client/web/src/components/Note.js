@@ -24,21 +24,23 @@ class Note extends Component {
 		const { store } = this.context;
 		store.dispatch({
 			type: "SELECT_NOTE",
-			id: props.id
+			id: props.id,
+			name: props.name,
+			content: props.content
 		});
 		console.log("state after selection: ", store.getState());
 	}
 
 	render() {
 		const { store } = this.context;
-		const selectedNoteId = store.getState().selectedNoteId;
+		const selectedNote = store.getState().selectedNote;
 		var selected = "";
 		const classes = classNames({
 			note: true,
-			selected: this.props.id == selectedNoteId
+			selected: this.props.id == selectedNote.id
 		});
 		return(
-			<div className={classes} id={this.props.id} onClick={() => this.handleClick(this.props)}>
+			<div className={classes} id={"Note_" + this.props.id} onClick={() => this.handleClick(this.props)}>
 				<div className="noteHeader"><b>{this.props.name}</b></div>
 				<div className="noteContent">{this.props.content.substring(0,25)}...</div>
 			</div>

@@ -1,3 +1,12 @@
+const removeNoteFromArray = (notes, noteIdToRemove) => {
+	var idx = notes.findIndex(function (obj) { 
+		return obj.id === noteIdToRemove; 
+	});
+	return notes
+		.slice(0, idx)
+		.concat(notes.slice(idx + 1));
+}
+
 const noteReducer = (state, action) => {
 	switch (action.type) {
 		case 'ADD_NOTE':
@@ -18,6 +27,8 @@ const notes = (state = [], action) => {
 				...state,
 				noteReducer(state, action)
 			];
+		case 'DELETE_NOTE':
+			return removeNoteFromArray(state, action.id);
 		default:
 			return state;
 	}

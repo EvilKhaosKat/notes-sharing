@@ -5,7 +5,7 @@ class ShareButton extends Component {
 	render() {
 		return (
 			<Button className="shareButton">
-				<i class="fas fa-share-alt"></i>
+				<i className="fas fa-share-alt"></i>
 			</Button>
 		);
 	}

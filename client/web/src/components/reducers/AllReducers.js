@@ -1,12 +1,12 @@
 import notes from './Notes';
 import nextId from './NotesIds';
-import selectedNoteId from './SelectedNoteId';
+import selectedNote from './SelectedNote';
 import { combineReducers } from 'redux';
 
 const notesAppReducers = combineReducers({
 		notes,
 		nextId,
-		selectedNoteId
+		selectedNote
 	});
 
 export default notesAppReducers;

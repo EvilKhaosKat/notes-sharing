@@ -50,6 +50,7 @@ class AddNote extends Component {
 					onKeyPress={event => {
 				    if (event.which === 13 /* Enter */) {
 				      event.preventDefault();
+					  this.handleClick(this.state.inputValue);
 				    }
 				  }}
 					>
