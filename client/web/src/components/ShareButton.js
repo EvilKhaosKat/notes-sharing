@@ -4,7 +4,9 @@ import { Button } from 'react-bootstrap';
 class ShareButton extends Component {
 	render() {
 		return (
-			<Button className="shareButton">Share</Button>
+			<Button className="shareButton">
+				<i class="fas fa-share-alt"></i>
+			</Button>
 		);
 	}
 }

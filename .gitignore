@@ -31,3 +31,6 @@ hs_err_pid*
 
 # project specific files
 *.db
+
+# client specific folder
+node-modules/

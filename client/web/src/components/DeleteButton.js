@@ -5,7 +5,7 @@ class DeleteButton extends Component {
 	render() {
 		return (
 			<Button className="deleteButton">
-				<i className="fab fa-trash"></i>
+				<i className="fas fa-trash-alt"></i>
 			</Button>
 		);
 	}
