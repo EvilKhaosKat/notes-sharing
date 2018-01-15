@@ -17,6 +17,24 @@ const editNoteInArray = (notes, noteToEdit) => {
 	return newArr;
 }
 
+const editNoteName = (notes, id, newName) => {
+	var idx = notes.findIndex(function (obj) { 
+		return obj.id === id; 
+	});
+	var newArr = notes.slice(0);
+	newArr[idx].name = newName;
+	return newArr;
+}
+
+const editNoteContent = (notes, id, newContent) => {
+	var idx = notes.findIndex(function (obj) { 
+		return obj.id === id; 
+	});
+	var newArr = notes.slice(0);
+	newArr[idx].content = newContent;
+	return newArr;
+}
+
 const noteReducer = (state, action) => {
 	switch (action.type) {
 		case 'ADD_NOTE':
@@ -41,6 +59,10 @@ const notes = (state = [], action) => {
 			return removeNoteFromArray(state, action.id);
 		case 'EDIT_NOTE':
 			return editNoteInArray(state, action.note);
+		case 'EDIT_NOTE_NAME':
+			return editNoteName(state, action.id, action.value);
+		case 'EDIT_NOTE_CONTENT':
+			return editNoteContent(state, action.id, action.value);
 		default:
 			return state;
 	}

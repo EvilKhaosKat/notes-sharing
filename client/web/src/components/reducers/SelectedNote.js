@@ -6,6 +6,8 @@ const selectedNote = (state = {}, action) => {
 				name: action.name,
 				content: action.content
 			};
+		case 'DESELECT':
+			return {};
 		default:
 			return state;
 	}

@@ -34,10 +34,9 @@ class Note extends Component {
 	render() {
 		const { store } = this.context;
 		const selectedNote = store.getState().selectedNote;
-		var selected = "";
 		const classes = classNames({
 			note: true,
-			selected: this.props.id == selectedNote.id
+			selected: this.props.id === selectedNote.id
 		});
 		return(
 			<div className={classes} id={"Note_" + this.props.id} onClick={() => this.handleClick(this.props)}>

@@ -18,7 +18,7 @@ class NoteEditor extends Component {
 		this.unsubscribe();
 	}
 	
-	editNote() {
+	editNote(note) {
 
 	}
 
@@ -38,24 +38,28 @@ class NoteEditor extends Component {
 	renderEditor() {
 		const { store } = this.context;
 		const selectedNote = store.getState().selectedNote;
-		console.log("Selected note in editor: ", selectedNote);
-		if (selectedNote.id !== undefined) {		
-			return(
-				<form>
-					<FormGroup controlId="noteEditorForm">
-						<FormControl type="text" className="noteHeadEditor"/>
-						<FormControl componentClass="textarea" className="noteBodyEditor"/>
-					</FormGroup>
-				</form>
-			);
-		} else {
-			return(
-				<div>Nothing...</div>
-			);
-		}
+		return(
+			<form>
+				<FormGroup controlId="noteEditorForm">
+					<FormControl 
+						type="text" 
+						className="noteHeadEditor" 
+						value={selectedNote.name} 
+						 />
+					<FormControl 
+						componentClass="textarea" 
+						className="noteBodyEditor" 
+						value={selectedNote.content}
+						 />
+				</FormGroup>
+			</form>
+		);
 	}
 
 	render() {
+		const { store } = this.context;
+		const selectedNote = store.getState().selectedNote;
+		if (selectedNote.id !== undefined) {	
 		return(
 			<div className="noteEditor">
 				<div className="noteEditorToolbar">
@@ -66,6 +70,11 @@ class NoteEditor extends Component {
 				</div>
 			</div>
 		);
+		} else {
+			return(
+				<div>Nothing...</div>
+			);
+		}
 	}
 }
 

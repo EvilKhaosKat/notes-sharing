@@ -11,6 +11,9 @@ class DeleteButton extends Component {
 			type: "DELETE_NOTE",
 			id: noteToDelete.id
 		});
+		store.dispatch({
+			type: "DESELECT"
+		});
 	}
 	
 	render() {
