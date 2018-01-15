@@ -1,0 +1,11 @@
+.note:hover {
+	background-color: rgb(190, 233, 247);
+}
+
+.selected {
+	background-color: rgb(173, 216, 230);
+}
+
+.NotesListCol {
+	background-color: #dffdff;
+}
