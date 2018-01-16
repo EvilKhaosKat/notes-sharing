@@ -30,9 +30,10 @@ class Note extends Component {
 
 	componentDidMount() {
 		const { store } = this.context;
-		this.unsubscribe = store.subscribe(() => 
-			this.forceUpdate()
-		);
+		this.unsubscribe = store.subscribe(() => {
+			this.updateState();
+      this.forceUpdate();
+		});
 	}
 
 	componentWillUnmount() {

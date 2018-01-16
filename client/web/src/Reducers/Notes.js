@@ -21,10 +21,18 @@ const removeNoteFromArray = (notes, noteIdToRemove) => {
 }
 
 const selectNote = (notes, id) => {
+  var newArr = notes.slice(0);
+  // find already selected note and deselect it
+  var selectedNoteIdx = notes.findIndex(function (obj) { 
+    return obj.selected === true; 
+  });
+  if (selectedNoteIdx !== -1) {
+    newArr[selectedNoteIdx].selected = false;
+  }
+  // select a new note
 	var idx = notes.findIndex(function (obj) { 
 		return obj.id === id; 
 	});
-	var newArr = notes.slice(0);
 	newArr[idx].selected = true;
 	return newArr;
 }
