@@ -29,7 +29,6 @@ class AddNote extends Component {
 		}
 		const { store } = this.context;
 		const nextId = store.getState().nextId;
-		console.log("next id is: ", nextId);
 		store.dispatch({
 			type: "ADD_NOTE",
 			id: nextId,

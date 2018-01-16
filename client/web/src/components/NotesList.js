@@ -25,14 +25,13 @@ class NotesList extends Component {
 
 	render() {
 		const { store } = this.context;
-		const state = store.getState();
-		const notes = state.notes;
+		const notes = store.getState().notes;
 
 		console.log("notes are: ", notes);
 		return(
 			<div className="notesList">
 				{notes.map(note => 
-					<Note key={note.id} id={note.id} name={note.name} content={note.content} />
+					<Note key={note.id} id={note.id} />
 				)}
 			</div>
 		);

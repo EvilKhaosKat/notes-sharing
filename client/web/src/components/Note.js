@@ -4,10 +4,29 @@ import classNames from 'classnames';
 
 class Note extends Component {
 
-	/*TODO
-		suppose we have field "selectedNoteId" in state
-		after
-	*/
+	constructor(props) {
+		super(props);
+		this.state = {};
+	}
+	
+	getNoteById(id) {
+		const { store } = this.context;
+		const notes = store.getState().notes;
+		var note = notes.find(function (obj) { 
+			return obj.id === id; 
+		});
+		return note;
+	}
+  
+  updateState() {
+    this.setState(
+			this.getNoteById(this.props.id)
+		);
+  }
+	
+	componentWillMount() {
+		this.updateState();
+	}
 
 	componentDidMount() {
 		const { store } = this.context;
@@ -20,28 +39,25 @@ class Note extends Component {
 		this.unsubscribe();
 	}
 
-	handleClick(props) {
+	handleClick() {
 		const { store } = this.context;
 		store.dispatch({
 			type: "SELECT_NOTE",
-			id: props.id,
-			name: props.name,
-			content: props.content
+			id: this.state.id
 		});
-		console.log("state after selection: ", store.getState());
+    this.updateState();
+		console.log("[Note] state after selection: ", store.getState());
 	}
 
 	render() {
-		const { store } = this.context;
-		const selectedNote = store.getState().selectedNote;
 		const classes = classNames({
 			note: true,
-			selected: this.props.id === selectedNote.id
+			selected: this.state.selected
 		});
 		return(
-			<div className={classes} id={"Note_" + this.props.id} onClick={() => this.handleClick(this.props)}>
-				<div className="noteHeader"><b>{this.props.name}</b></div>
-				<div className="noteContent">{this.props.content.substring(0,25)}...</div>
+			<div className={classes} id={"Note_" + this.state.id} onClick={() => this.handleClick()}>
+				<div className="noteHeader"><b>{this.state.name}</b></div>
+				<div className="noteContent">{this.state.content.substring(0,25)}...</div>
 			</div>
 		);
 	}

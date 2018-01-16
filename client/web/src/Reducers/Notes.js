@@ -1,3 +1,16 @@
+const addNewNote = (notes, action) => {
+	var newNote = {
+		id: action.id,
+		name: action.name,
+		content: action.content,
+		selected: false
+	};
+	return [
+		...notes,
+		newNote
+	];
+}
+
 const removeNoteFromArray = (notes, noteIdToRemove) => {
 	var idx = notes.findIndex(function (obj) { 
 		return obj.id === noteIdToRemove; 
@@ -5,6 +18,15 @@ const removeNoteFromArray = (notes, noteIdToRemove) => {
 	return notes
 		.slice(0, idx)
 		.concat(notes.slice(idx + 1));
+}
+
+const selectNote = (notes, id) => {
+	var idx = notes.findIndex(function (obj) { 
+		return obj.id === id; 
+	});
+	var newArr = notes.slice(0);
+	newArr[idx].selected = true;
+	return newArr;
 }
 
 const editNoteInArray = (notes, noteToEdit) => {
@@ -35,28 +57,14 @@ const editNoteContent = (notes, id, newContent) => {
 	return newArr;
 }
 
-const noteReducer = (state, action) => {
-	switch (action.type) {
-		case 'ADD_NOTE':
-			return {
-				id: action.id,
-				name: action.name,
-				content: action.content
-			};
-		default:
-			return state;
-	}
-}
-
 const notes = (state = [], action) => {
 	switch (action.type) {
 		case 'ADD_NOTE':
-			return [
-				...state,
-				noteReducer(state, action)
-			];
+			return addNewNote(state, action);
 		case 'DELETE_NOTE':
 			return removeNoteFromArray(state, action.id);
+		case 'SELECT_NOTE':
+			return selectNote(state, action.id);
 		case 'EDIT_NOTE':
 			return editNoteInArray(state, action.note);
 		case 'EDIT_NOTE_NAME':
