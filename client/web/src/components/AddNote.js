@@ -35,6 +35,10 @@ class AddNote extends Component {
 			name: name,
 			content: ""
 		});
+    store.dispatch({
+			type: "SELECT_NOTE",
+			id: nextId
+		});
 		store.dispatch({
 			type: "INC_ID"
 		});
