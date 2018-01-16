@@ -47,7 +47,6 @@ class Note extends Component {
 			id: this.state.id
 		});
     this.updateState();
-		console.log("[Note] state after selection: ", store.getState());
 	}
 
 	render() {

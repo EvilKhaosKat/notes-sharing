@@ -1,25 +1,26 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { ButtonToolbar, FormGroup, FormControl } from 'react-bootstrap';
-import DeleteButton from './DeleteButton';
-import ShareButton from './ShareButton';
+import { FormGroup, FormControl } from 'react-bootstrap';
+
+const initialState = {
+  id: null,
+  name: null,
+  content: null
+}
 
 class NoteEditor extends Component {
-	
+
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = initialState;
 	}
-	
+
 	updateState() {
     this.setState(
 			this.getSelectedNote(this.props.id)
 		);
+    console.log("[Editor] updating to: ", this.getSelectedNote(this.props.id));
   }
-	
-	componentWillMount() {
-		this.updateState();
-	}
 	
 	getSelectedNote() {
 		const { store } = this.context;
@@ -27,9 +28,7 @@ class NoteEditor extends Component {
 		var note = notes.find(function (obj) { 
 			return obj.selected === true; 
 		});
-		if (note)
-			return note;
-		return {};
+		return note ? note : initialState;
 	}
 	
 	componentDidMount() {
@@ -52,18 +51,9 @@ class NoteEditor extends Component {
 
 	}
 
-	renderToolbar() {
-		return(
-			<ButtonToolbar>
-				<DeleteButton />
-				<ShareButton />
-			</ButtonToolbar>
-		);
-	}
-
 	renderEditor() {
 		return(
-			<form>
+			<form className="noteEditor">
 				<FormGroup controlId="noteEditorForm">
 					<FormControl 
 						type="text" 
@@ -81,15 +71,11 @@ class NoteEditor extends Component {
 	}
 
 	render() {
-		if (this.state.id !== undefined) {	
+    console.log("[Editor] state: ", this.state);
+		if (this.state.id !== null) {	
 			return(
 				<div className="noteEditor">
-					<div className="noteEditorToolbar">
-						{this.renderToolbar()}
-					</div>
-					<div className="noteEditorBody">
-						{this.renderEditor()}
-					</div>
+          {this.renderEditor()}
 				</div>
 			);
 		} else {

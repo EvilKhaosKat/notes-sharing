@@ -4,16 +4,25 @@ import { Button } from 'react-bootstrap';
 
 class DeleteButton extends Component {
 	
-	handleClick() {
+  getSelectedNotes() {
 		const { store } = this.context;
-		const noteToDelete = store.getState().selectedNote;
-		store.dispatch({
-			type: "DELETE_NOTE",
-			id: noteToDelete.id
+		const notes = store.getState().notes;
+		var selectedNotes = notes.filter(function (obj) { 
+			return obj.selected === true; 
 		});
-		store.dispatch({
-			type: "DESELECT"
-		});
+		return selectedNotes;
+	}
+  
+	handleClick() {
+    const { store } = this.context;
+    var selectedNotes = this.getSelectedNotes();
+		selectedNotes.forEach((note, idx, selectedNotes) => {
+      store.dispatch({
+        type: "DELETE_NOTE",
+        id: note.id
+      });
+    });
+		
 	}
 	
 	render() {
