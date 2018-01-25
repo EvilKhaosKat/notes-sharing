@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { FormGroup, FormControl } from 'react-bootstrap';
+import NoteContentEditor from './NoteContentEditor';
 
 const initialState = {
-  id: null,
-  name: null,
-  content: null
+  id: '',
+  name: '',
+  content: ''
 }
 
 class NoteEditor extends Component {
-
+  
 	constructor(props) {
 		super(props);
 		this.state = initialState;
@@ -19,9 +20,27 @@ class NoteEditor extends Component {
     this.setState(
 			this.getSelectedNote(this.props.id)
 		);
-    console.log("[Editor] updating to: ", this.getSelectedNote(this.props.id));
   }
-	
+  
+  updateNoteNameState(evt) {
+    var newState = Object.assign({}, this.state);
+    newState.name = evt.target.value;
+    console.log("[Editor] updating state to: ", newState.name);
+    this.setState(
+      newState
+    );
+  }
+  
+	updateNoteName(evt) {    
+    const { store } = this.context;
+    this.updateNoteNameState(evt);
+    store.dispatch({
+      type: "EDIT_NOTE_NAME",
+      id: this.state.id,
+      value: evt.target.value
+    });
+  }
+  
 	getSelectedNote() {
 		const { store } = this.context;
 		const notes = store.getState().notes;
@@ -41,30 +60,32 @@ class NoteEditor extends Component {
 
 	componentWillUnmount() {
 		this.unsubscribe();
-	}
+	}  
+  
+  handleKeyPress(evt) {
+    if (evt.which === 13 /* Enter */) {
+      evt.preventDefault();
+      this.updateNoteName(evt);
+    }
+  }
 	
-	editNote(note) {
-
-	}
-
-	saveNote() {
-
-	}
+	onEditorStateChange: Function = (editorState) => {
+    this.setState({
+      editorState,
+    });
+  };
 
 	renderEditor() {
 		return(
 			<form className="noteEditor">
-				<FormGroup controlId="noteEditorForm">
+				<FormGroup controlId="noteEditorForm" onKeyPress={evt => {this.handleKeyPress(evt)}}>
 					<FormControl 
 						type="text" 
 						className="noteHeadEditor" 
-						value={this.state.name ? this.state.name : ""} 
-						 />
-					<FormControl 
-						componentClass="textarea" 
-						className="noteBodyEditor" 
-						value={this.state.content ? this.state.content : ""}
-						 />
+						value={this.state.name} 
+            onChange={evt => this.updateNoteName(evt)}
+					/>
+					<NoteContentEditor state={this.state.content} />
 				</FormGroup>
 			</form>
 		);

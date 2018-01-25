@@ -27,7 +27,7 @@ class NotesList extends Component {
 		const { store } = this.context;
 		const notes = store.getState().notes;
 
-		console.log("notes are: ", notes);
+		console.log("[NotesList] notes are: ", notes);
 		return(
 			<div className="notesList">
 				{notes.map(note => 

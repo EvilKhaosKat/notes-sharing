@@ -53,6 +53,7 @@ const editNoteName = (notes, id, newName) => {
 	});
 	var newArr = notes.slice(0);
 	newArr[idx].name = newName;
+  console.log("[Reducer] new notes: ", newArr);
 	return newArr;
 }
 

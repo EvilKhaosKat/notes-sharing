@@ -7,8 +7,9 @@ import DeleteButton from './DeleteButton';
 import ShareButton from './ShareButton';
 import { ButtonToolbar, Grid, Row, Col } from 'react-bootstrap';
 
-import './css/NoteApp.css'
-import './css/bootstrap.css'
+import './css/NoteApp.css';
+import './css/bootstrap.css';
+import '../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 class NotesApp extends Component {
   

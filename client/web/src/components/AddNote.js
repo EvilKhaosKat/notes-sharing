@@ -44,19 +44,20 @@ class AddNote extends Component {
 		});
 		this.clearValue();
 	}
+  
+  handleKeyPress(evt) {
+    if (evt.which === 13 /* Enter */) {
+      evt.preventDefault();
+      this.handleClick(this.state.inputValue);
+    }
+  }
 
 	render() {
 		return (
 			<form>
 				<FormGroup 
 					controlId="addNoteForm"
-					onKeyPress={event => {
-				    if (event.which === 13 /* Enter */) {
-				      event.preventDefault();
-					  this.handleClick(this.state.inputValue);
-				    }
-				  }}
-					>
+					onKeyPress={evt => this.handleKeyPress(evt)}>
 					<InputGroup>
 						<FormControl type="text" placeholder="Add new note..." value={this.state.inputValue} onChange={evt => this.updateValue(evt)} />
 						<InputGroup.Button>
