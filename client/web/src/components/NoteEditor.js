@@ -93,7 +93,7 @@ class NoteEditor extends Component {
 
 	render() {
     console.log("[Editor] state: ", this.state);
-		if (this.state.id !== null) {	
+		if (this.state.id !== "") {	
 			return(
 				<div className="noteEditor">
           {this.renderEditor()}
